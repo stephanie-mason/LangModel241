@@ -1,0 +1,41 @@
+Enter a history: history is [<s>]
+Order 2 completion: <s> then drove on one has performed both the enchanted princess was come upon his hand which was even enough to last by a pound that i gave her face figure and are dancing and as soon contrive to push him and the youth however caught the mother killed my dear child and wanted to town looked a man's beard so he saw this round and after her room where chanticleer 'what one winter's day as a bow and they came to the thing for another draught he went on land but she said to the way of wood and having their journey but when the door he were some old grey man rode into the castle of the prize as it </s>
+Order 3 completion: <s> then some of his first bride and set up house together 'but we must be a very sad and ill </s>
+Order 4 completion: <s> shoot into the midst of peace he must be a house no great way off where there were three tablets containing an account of the dwarf's third gift then the miser said 'bind me fast bind me fast for pity's sake' but the countryman seized his fiddle and played away and the girl found herself back in the old world close to her mother's grave and planted it there and cried so much that her heart was almost broken and the bank was so steep that he could find no way to get her task done she said she would take him more than an hour to cross he began to long to see him once again before his end then he said to her 'come little red-cap here is a piece of bread was given to them but as soon as dummling had gone out she seized the prince by the arm and gave him a beautiful castle but empty and dreary within for it was very deep so deep that she could not help setting out to see what that could be anything to a man who has struck down seven at one blow i leapt over the tree because the huntsmen are shooting down there in the thicket </s>
+
+Enter a history: history is [<s> they]
+Order 2 completion: <s> they all were found no injury the town to step and the third night their wedding was the summer rose-red will not be thinking what have you satisfied and the meantime she could ask the evening and as still not wait until i must and the garden wherein lived together </s>
+Order 3 completion: <s> they found the way of the place and poked the ends of their enemy and feed their young ones 'out with you you shall fare ill he said that they were still awake and i only wish that you will have to let the nut fall into the snares of another who so fascinated him that he ordered her to the horse let him fall in and went into the forest </s>
+Order 4 completion: <s> they were still not safe for he was afraid </s>
+
+Enter a history: history is [<s> i]
+Order 2 completion: <s> i get down the cook who is only harness the same tapping at the fish but her pinafore until she limped hobblety jib back to the royal clothes </s>
+Order 3 completion: <s> i have only cinder-cake and sour beer if that is the first time he called and cried 'fine wares to sell!' but snowdrop grew more and said 'heaven forbid that a time a soldier who for many years when an unknown huntsman announced himself to work to take away some token of the princesses went into the forest the woman also liked the taste of the street crying 'good jams cheap! good jams cheap!' this rang pleasantly in the old king's court with rich gifts of gold and they take you in pieces and tried to entice the duck who was famed for his goods so that the two brothers are who set out soon afterwards the mother said 'no no! you slut you have set me free twelve long years have i journeyed forth' he let the spindle wounded her should not really die but should only fall asleep for a month afterwards he came to the young lady's and the coffin but the shepherd's house </s>
+Order 4 completion: <s> i don't understand that at all yet' the elder brother smiled when he heard what dummling wanted he said 'since you have given must be kept i will go out into the fish-pond </s>
+
+Enter a history: history is [<s> the]
+Order 2 completion: <s> the third time the dwarfs always in a false princess had gone he took them and soon find you to heaven followed the godless crew returned to take all is what a garland from the best way </s>
+Order 3 completion: <s> the next was too big for the poor bride would be a dainty morsel </s>
+Order 4 completion: <s> the prince was only to be seen </s>
+
+Enter a history: history is [to the]
+Order 2 completion: to the king's daughter who one piece of the hope of fur put it with a grand they had broken and the bottom of a bed but something remained a bit of golden apple </s>
+Order 3 completion: to the old woman however was still cursing when a glass mountain </s>
+Order 4 completion: to the fish and was in urgent danger of being dragged into the water after the spindle she remembered nothing more until she awoke and found that he could not make out what it was to shudder!' the third night he did the same </s>
+
+Enter a history: history is [and then all]
+Order 2 completion: and then all their hands you this i will be as i suppose you are dancing so the power she finished he could 'don't bring that cow had told her mother very hard work for a shirt and everything was placed herself a light a golden bird hanging in her and pleased the king's son and went up the door but if she ran thither but they went down and like a rock in the thieves but if something to the corner of the vinegar bottle of cunning of the leaves immediately and the bride so saying he broke in which has the other winds and left me my wife </s>
+Order 3 completion: and then all the keys with her five gold rings at the bottom i pushed the ghost down the wall </s>
+Order 4 completion: and then all the wine ran out without the carter seeing that he had golden hair </s>
+
+Enter a history: history is [a large velociraptor]
+Order 2 completion: a large velociraptor <fail>
+Order 3 completion: a large velociraptor <fail>
+Order 4 completion: a large velociraptor <fail>
+
+Enter a history: history is [</s>]
+Order 2 completion: </s> <fail>
+Order 3 completion: </s> <fail>
+Order 4 completion: </s> <fail>
+
+Enter a history: 

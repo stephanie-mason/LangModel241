@@ -59,8 +59,26 @@ public class LanguageModel {
     //        "Error: Unable to open file " + filename
     //        (where filename contains the name of the problem file)
     //      and then exit with value 1 (i.e. System.exit(1))
+
     public LanguageModel( String textFilename, int maxOrder, java.util.Random generator, String vocabFilename, String countsFilename ) {
-		return;
+      this.p = new HashMap<String,Double>(); //ngrams are keys, probabilites are floating point number value
+      this.vocab = new ArrayList<String>(); //stores a list of vocabulary appearing in inputFile
+      this.maxOrder = maxOrder;
+      this.generator = generator;
+      //  - If vocabFilename is non-null, the vocabulary words are printed to it, one per line, in order
+      // make sure to look at notes above
+
+      //  - If countsFilename is non-null, the ngram counts words are printed to countsFilename, in order
+      //    each line has the ngram, then a tab, then the number of times that ngram appears
+      //    these should be printed in case-insensitive ascending alphabetic order by the n-grams
+
+
+      //DELETE
+      System.out.println("p: " + p.get("some key"));
+//      System.out.println("first vocab: " + vocab.get(0));
+      System.out.println("Max Order: " + maxOrder);
+      System.out.println("Generator: " + generator.nextInt());
+      return;
     }
 
     // Accessors
@@ -71,7 +89,7 @@ public class LanguageModel {
     // Postconditions:
     //  - this.maxOrder is returned
     public int getMaxOrder() {
-        return 0;
+        return this.maxOrder;
     }
 
     // randomCompletion

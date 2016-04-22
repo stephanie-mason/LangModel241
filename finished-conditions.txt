@@ -1,0 +1,33 @@
+// Constructor
+
+// LanguageModel
+// Preconditions:
+//    - textFilename is the name of a plaintext training file (inputFile)
+//    - maxOrder is the maximum n-gram order for which to estimate counts (the 'setting' of the program)
+//  - generator is java.util.Random object (generates random number based on input seed, which is static set to 5 in Program1.java)
+//  - vocabFilename is the name where the vocab file will be written
+//        vocabFilename can also be null (output file for vocabulary)
+//  - countsFilename is the name where the counts will be written
+//        countsFilename can also be null (output file for counts)
+// Postconditions:
+//  - this.vocab contains each word appearing in textFilename exactly once
+//    in case-insensitive ascending alphabetic order
+//  - this.maxOrder is assigned maxOrder
+//  - this.generator is assigned generator
+//  - If vocabFilename is non-null, the vocabulary words are printed to it, one per line, in order
+
+
+// getMaxOrder
+//  - this.maxOrder is returned
+
+
+// saveVocab
+// Preconditions:
+//  - vocabFilename is the name where the vocab file will be written
+//        vocabFilename can also be null
+// Postconditions:
+//  - this.vocab contains each word appearing in textFilename exactly once
+//    in case-insensitive ascending alphabetic order
+//  - If opening the file throws a FileNotFoundException, print to standard error:
+//        "Error: Unable to open file " + vocabFilename
+//      and then exit with value 1 (i.e. System.exit(1))

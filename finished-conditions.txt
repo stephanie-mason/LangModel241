@@ -1,5 +1,4 @@
 // Constructor
-
 // LanguageModel
 // Preconditions:
 //    - textFilename is the name of a plaintext training file (inputFile)
@@ -15,6 +14,8 @@
 //  - this.maxOrder is assigned maxOrder
 //  - this.generator is assigned generator
 //  - If vocabFilename is non-null, the vocabulary words are printed to it, one per line, in order
+// Notes:
+//  - n-gram and history counts should be computed with a call to getCounts
 
 
 // getMaxOrder
@@ -31,3 +32,29 @@
 //  - If opening the file throws a FileNotFoundException, print to standard error:
 //        "Error: Unable to open file " + vocabFilename
 //      and then exit with value 1 (i.e. System.exit(1))
+
+// getCounts
+// Preconditions:
+//  - input is an initialized Scanner object associated with the text input file
+//  - ngramCounts is an empty (but non-null) HashMap
+//  - historyCounts is an empty (but non-null) HashMap
+//  - vocab is an empty (but non-null) ArrayList
+//  - maxOrder is the maximum order n-gram for which to extract counts
+// Postconditions:
+//  - ngramCounts.get(ngram) contains the number of times that ngram appears in the input
+//      ngram must be 2+ words long (e.g. "<s> i")
+//  - historyCounts.get(history) contains the number of times that ngram history appears in the input
+//      histories can be a single word (e.g. "<s>")
+//  - vocab contains each word (token) in the input file exactly once, in case-insensitive ascending alphabetic order
+// Notes:
+//  - You may find it useful to implement helper function incrementHashMap and use it
+
+
+// Preconditions:
+//  - map is a non-null HashMap
+//  - key is a key that may or may not be in map
+// Postconditions:
+//  - If key was already in map, map.get(key) returns 1 more than it did before
+//  - If key was not in map, map.get(key) returns 1
+// Notes
+//  - This method is useful, but optional

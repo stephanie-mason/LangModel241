@@ -34,6 +34,7 @@ public class LanguageModel {
   ArrayList<String> vocab;          // stores the unique words in the input text
   int maxOrder;                     // maximum n-gram order to compute
   java.util.Random generator;       // a random number generator object
+
   // Constructor
   //  - this.p maps ngrams (h,w) to the the maximum likelihood estimates
   //    of P(w|h) for all n-grams up to maxOrder
@@ -42,7 +43,6 @@ public class LanguageModel {
   //    each line has the ngram, then a tab, then the number of times that ngram appears
   //    these should be printed in case-insensitive ascending alphabetic order by the n-grams
   // Notes:
-  //  - n-gram and history counts should be computed with a call to getCounts
   //  - File saving should be accomplished by calls to saveVocab and saveCounts
   //  - convertCountsToProbabilities should be used to then get the probabilities
   //  - If opening any file throws a FileNotFoundException, print to standard error:
@@ -64,30 +64,20 @@ public class LanguageModel {
     System.out.println("Getting counts...");
     getCounts(input, ngramCounts, historyCounts, vocab, maxOrder);
 
+    //  - ngramCounts.get(ngram) contains the number of times that ngram appears in the input
+    //      ngram must be 2+ words long (e.g. "<s> i")
+    System.out.println("Count for n-gram \"<s> this\" is: " + ngramCounts.get("<s> this"));
 
-    //ALPHABETIZE VOCAB LIST
-    Collections.sort(vocab);
+    //  - historyCounts.get(history) contains the number of times that ngram history appears in the input
+    //      histories can be a single word (e.g. "<s>")
+    System.out.println("Count for history with \"<s>\" is: " + historyCounts.get("<s>"));
+
 
     //print vocab to an output file (if applicable)
     if(vocabFilename != null) {
       saveVocab(vocab, vocabFilename);
     }
 
-
-
-    //  - If countsFilename is non-null, the ngram counts words are printed to countsFilename, in order
-    //    each line has the ngram, then a tab, then the number of times that ngram appears
-    //    these should be printed in case-insensitive ascending alphabetic order by the n-grams
-
-    //
-
-
-    /*
-    System.out.println("p: " + p.get("some key"));
-    System.out.println("first vocab: " + vocab.get(0));
-    System.out.println("Max Order: " + maxOrder);
-    System.out.println("Generator: " + generator.nextInt());
-    */
     return;
   }
 
@@ -195,32 +185,11 @@ public class LanguageModel {
   }
 
   // getCounts
-  // Preconditions:
-  //  - input is an initialized Scanner object associated with the text input file
-  //  - ngramCounts is an empty (but non-null) HashMap
-  //  - historyCounts is an empty (but non-null) HashMap
-  //  - vocab is an empty (but non-null) ArrayList
-  //  - maxOrder is the maximum order n-gram for which to extract counts
-  // Postconditions:
-  //  - ngramCounts.get(ngram) contains the number of times that ngram appears in the input
-  //      ngram must be 2+ words long (e.g. "<s> i")
-  //  - historyCounts.get(history) contains the number of times that ngram history appears in the input
-  //      histories can be a single word (e.g. "<s>")
-  //  - vocab contains each word (token) in the input file exactly once, in case-insensitive ascending alphabetic order
-  // Notes:
-  //  - You may find it useful to implement helper function incrementHashMap and use it
+  // Read input file and map n-grams/histories to their counts
   private void getCounts(Scanner input, HashMap<String,Integer> ngramCounts, HashMap<String,Integer> historyCounts, ArrayList<String> vocab, int maxOrder) {
-    ArrayList<String> trainingArray = new ArrayList<String>();
     ArrayList<String> linesArray = new ArrayList<String>();
     ArrayList<String> currLine = new ArrayList<String>();
     String currWord = new String();
-    //for each line in the file do several things...
-      //add each word in the line to the training array X
-          //this array will later be iterated over to count the grams\
-      //add each word to the vocab list, but don't repeat anyX
-      //build n-gram HashMap for each order up to maxOrder w/ 0 value
-      //build history HashMap for each order up to maxOrder  w 0 values
-
 
     //Convert scanner file to an ArrayList
     while(input.hasNextLine()) {
@@ -230,18 +199,14 @@ public class LanguageModel {
     //Build ArrayLists and HashMaps
     for (int i = 0; i < linesArray.size(); i++) {
       currLine = stringToArray(linesArray.get(i));
-      System.out.println(currLine);
 
       // BUILD N-GRAMS & HISTORIES
       for (int n = 2; n <= maxOrder; n++) {
-        System.out.println("Building order " + n + "  n-grams...");
-
         int placeholder = 0;
         while(placeholder + n < currLine.size()) {
           ArrayList<String> currGram = new ArrayList<String>();
           ArrayList<String> currHist = new ArrayList<String>();
           for (int w = placeholder; w < placeholder + n; w++) {
-            System.out.println("W: " + w);
 
             if (w < currLine.size())
               currGram.add(currLine.get(w));
@@ -249,22 +214,18 @@ public class LanguageModel {
             if (w < placeholder + n - 1)
               currHist.add(currLine.get(w));
           }
-          System.out.println("Curr Gram:" + currGram);
-          System.out.println("Curr Hist:" + currHist);
 
-          ngramCounts.put(arrayToString(currGram), 0);
-          historyCounts.put(arrayToString(currHist), 0);
+          //Add to nGramCounts or increment the count if its already there
+          incrementHashMap(ngramCounts, arrayToString(currGram));
+          incrementHashMap(historyCounts, arrayToString(currHist));
 
           placeholder++;
-          System.out.println("placeholder: " + placeholder);
 
           // Final Fencepost -- Last N-Gram needs to include </s>
           if (placeholder + n == currLine.size()) {
-            System.out.println("Last run, placeholder + n  is = " + currLine.size());
             ArrayList<String> lastGram = new ArrayList<String>();
             ArrayList<String> lastHist = new ArrayList<String>();
             for (int w = placeholder; w < placeholder + n; w++) {
-              System.out.println("W: " + w);
 
               if (w < currLine.size())
                 lastGram.add(currLine.get(w));
@@ -272,32 +233,16 @@ public class LanguageModel {
               if (w < placeholder + n - 1)
                 lastHist.add(currLine.get(w));
             }
-
-            System.out.println("Curr Gram:" + lastGram);
-            System.out.println("Curr Hist:" + lastHist);
-
             ngramCounts.put(arrayToString(lastGram), 0);
             historyCounts.put(arrayToString(lastHist), 0);
           }
         }
-
-
-
-        System.out.println("nGram Keys for n = " + n + " : " + ngramCounts.keySet());
-        System.out.println("ngram Size: " + ngramCounts.size());
-        System.out.println("History Keys for n = " + n + " : " + historyCounts.keySet());
-        System.out.println("History Size: " + historyCounts.size());
-
       }
 
       // MAKE ARRAYS
-      //System.out.println("Adding words to training & vocab arrays...");
       for (int j = 0; j < currLine.size(); j++) {
         currWord = currLine.get(j);
-        //System.out.println(currWord);
 
-        //BUILD TRAINING ARRAY
-        trainingArray.add(currWord);
 
         //BUILD VOCAB LIST
         // only add the word if it doesn't already appear in the list
@@ -305,14 +250,17 @@ public class LanguageModel {
           vocab.add(currWord);
         }
       }
-
-      //this is the current n-gram... so scan the rest of the file for this n-gram
-      //if you find it, increment count associated with current key
-      //after finishing scanning, the next (order) words are the current n-gram. so on so forth.
-      System.out.println("________________________________________________");
     }
 
-    System.out.println(trainingArray);
+    //ALPHABETIZE VOCAB LIST
+    Collections.sort(vocab);
+    /*
+    System.out.println("__________________________________________________");
+    System.out.println("nGrams Hashmap:" + ngramCounts.entrySet());
+    System.out.println("__________________________________________________");
+    System.out.println("history Hashmap: " + historyCounts.entrySet());
+    System.out.println("__________________________________________________");
+    */
     return;
   }
 
@@ -328,28 +276,26 @@ public class LanguageModel {
   }
 
   // incrementHashMap
-  // Preconditions:
-  //  - map is a non-null HashMap
-  //  - key is a key that may or may not be in map
-  // Postconditions:
   //  - If key was already in map, map.get(key) returns 1 more than it did before
   //  - If key was not in map, map.get(key) returns 1
-  // Notes
-  //  - This method is useful, but optional
   private void incrementHashMap(HashMap<String,Integer> map, String key) {
+    int count;
+    if (map.containsKey(key)) {
+      count = map.get(key);
+      count++;
+      map.put(key, count);
+    }
+    else {
+      map.put(key, 1);
+    }
     return;
   }
 
   // Static Methods
 
   // arrayToString
-  // Preconditions:
-  //  - sequence is a List (e.g. ArrayList) of Strings
-  // Postconditions:
   //  - sequence is returned in string form, each element joined by a single space
   //  - If sequence was length 0, the empty string is returned
-  // Notes:
-  //  - Already implemented for you
   public static String arrayToString(List<String> sequence) {
     java.lang.StringBuilder builder = new java.lang.StringBuilder();
     if( sequence.size() == 0 ) {
@@ -363,12 +309,7 @@ public class LanguageModel {
   }
 
   // stringToArray
-  // Preconditions:
-  //  - s is a string of words, each separated by a single space
-  // Postconditions:
   //  - An ArrayList is returned containing the words in s
-  // Notes:
-  //  - Already implemented for you
   public static ArrayList<String> stringToArray(String s) {
     return new ArrayList<String>(java.util.Arrays.asList(s.split(" ")));
   }

@@ -237,7 +237,7 @@ public class LanguageModel {
         System.out.println("Building order " + n + "  n-grams...");
 
         int placeholder = 0;
-        while(placeholder < currLine.size() - 1) {
+        while(placeholder + n < currLine.size()) {
           ArrayList<String> currGram = new ArrayList<String>();
           ArrayList<String> currHist = new ArrayList<String>();
           for (int w = placeholder; w < placeholder + n; w++) {
@@ -252,15 +252,36 @@ public class LanguageModel {
           System.out.println("Curr Gram:" + currGram);
           System.out.println("Curr Hist:" + currHist);
 
-          if (currGram.size() == n){
-            System.out.println("CurrGram is right size, adding last two arrays.");
-            ngramCounts.put(arrayToString(currGram), 0);
-            historyCounts.put(arrayToString(currHist), 0);
-          }
+          ngramCounts.put(arrayToString(currGram), 0);
+          historyCounts.put(arrayToString(currHist), 0);
 
           placeholder++;
           System.out.println("placeholder: " + placeholder);
+
+          // Final Fencepost -- Last N-Gram needs to include </s>
+          if (placeholder + n == currLine.size()) {
+            System.out.println("Last run, placeholder + n  is = " + currLine.size());
+            ArrayList<String> lastGram = new ArrayList<String>();
+            ArrayList<String> lastHist = new ArrayList<String>();
+            for (int w = placeholder; w < placeholder + n; w++) {
+              System.out.println("W: " + w);
+
+              if (w < currLine.size())
+                lastGram.add(currLine.get(w));
+
+              if (w < placeholder + n - 1)
+                lastHist.add(currLine.get(w));
+            }
+
+            System.out.println("Curr Gram:" + lastGram);
+            System.out.println("Curr Hist:" + lastHist);
+
+            ngramCounts.put(arrayToString(lastGram), 0);
+            historyCounts.put(arrayToString(lastHist), 0);
+          }
         }
+
+
 
         System.out.println("nGram Keys for n = " + n + " : " + ngramCounts.keySet());
         System.out.println("ngram Size: " + ngramCounts.size());

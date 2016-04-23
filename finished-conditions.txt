@@ -50,6 +50,7 @@
 //  - You may find it useful to implement helper function incrementHashMap and use it
 
 
+// incrementHashMap
 // Preconditions:
 //  - map is a non-null HashMap
 //  - key is a key that may or may not be in map

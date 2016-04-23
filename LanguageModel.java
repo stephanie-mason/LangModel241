@@ -23,6 +23,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Scanner;
 import java.util.Collections;
+import java.util.Iterator;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
@@ -51,7 +52,6 @@ public class LanguageModel {
   //      and then exit with value 1 (i.e. System.exit(1))
 
   public LanguageModel( String textFilename, int maxOrder, java.util.Random generator, String vocabFilename, String countsFilename ) {
-    this.p = new HashMap<String,Double>(); //ngrams are keys, probabilites are floating point number value
     this.maxOrder = maxOrder;
     this.generator = generator;
     File inputFile = new File(textFilename);
@@ -61,7 +61,6 @@ public class LanguageModel {
     ArrayList<String> vocab = new ArrayList<String>();
 
     //get n-gram/history counts & add them to hashmapw
-    System.out.println("Getting counts...");
     getCounts(input, ngramCounts, historyCounts, vocab, maxOrder);
 
     //  - ngramCounts.get(ngram) contains the number of times that ngram appears in the input
@@ -78,7 +77,69 @@ public class LanguageModel {
       saveVocab(vocab, vocabFilename);
     }
 
+    //convert counts to probabilities
+    this.p = convertCountsToProbabilities(ngramCounts, historyCounts); //ngrams are keys, probabilites are floating point number value
+    //System.out.println("this.p: " + this.p.entrySet());
+
+
+
     return;
+  }
+
+  // convertCountsToProbabilities
+  // Preconditions:
+  //  - ngramCounts.get(ngram) contains the number of times that ngram appears in the input
+  //  - historyCounts.get(history) contains the number of times that ngram history appears in the input
+  // Postconditions:
+  //  - this.p.get(ngram) contains the conditional probability P(w|h) for ngram (h,w)
+  //      only non-zero probabilities are stored in this.p
+  private HashMap<String,Double> convertCountsToProbabilities(HashMap<String,Integer> ngramCounts, HashMap<String,Integer> historyCounts) {
+    //probability of any given n-gram is (times n-gram appears)/(sum of all n-grams)
+    //probability of any given n-gram given history is (time specific n-gram with history appears)/(sum of all n-grams with the same history)
+    //                                                 =(that n-gram count)/(that history count)
+    HashMap<String,Double> p = new HashMap<String,Double>();
+
+    for (HashMap.Entry<String, Integer> curr : ngramCounts.entrySet()) {
+      String nGram = curr.getKey();
+      Integer nGramCount = curr.getValue();
+
+      ArrayList<String> nGramArray = stringToArray(nGram); //need to convert to key to get size & convert to history
+      ArrayList<String> histArray = new ArrayList<String>();
+
+      int histSize = nGramArray.size() - 1; //size of current n-gram
+
+      System.out.println("NGram: " + nGram);
+      System.out.println("Count: " + nGramCount);
+      System.out.println("nGramArray: " + nGramArray);
+      System.out.println("History size:" + histSize);
+
+      //pull the history from current n-gram (ie all but last word in the n-gram)
+      System.out.println("History is..." );
+
+      for (int i = 0; i < histSize; i++) {
+        histArray.add(nGramArray.get(i));
+      }
+      System.out.println(histArray);
+      //now get the count on that history
+      String currHist = arrayToString(histArray);
+      int historyCount = historyCounts.get(currHist);
+
+      System.out.println("currHist: " + currHist);
+      System.out.println("historyCount:" + historyCount);
+      System.out.println("-----------------------");
+      //and do the divisiion...
+
+      System.out.println ("Probability = " + ngramCounts.get(nGram) + " / " + historyCounts.get(currHist));
+      double probability = (double)(ngramCounts.get(nGram))/(double)(historyCounts.get(currHist));
+      System.out.println(" = " + probability);
+      System.out.println("______________________________________________");
+      System.out.println("Adding to p: \"" + nGram + "\":" + probability);
+      p.put(nGram,probability);
+      System.out.println("______________________________________________");
+    }
+
+    System.out.println(p.entrySet());
+    return null;
   }
 
 
@@ -233,8 +294,8 @@ public class LanguageModel {
               if (w < placeholder + n - 1)
                 lastHist.add(currLine.get(w));
             }
-            ngramCounts.put(arrayToString(lastGram), 0);
-            historyCounts.put(arrayToString(lastHist), 0);
+            incrementHashMap(ngramCounts, arrayToString(lastGram));
+            incrementHashMap(historyCounts, arrayToString(lastHist));
           }
         }
       }
@@ -264,16 +325,7 @@ public class LanguageModel {
     return;
   }
 
-  // convertCountsToProbabilities
-  // Preconditions:
-  //  - ngramCounts.get(ngram) contains the number of times that ngram appears in the input
-  //  - historyCounts.get(history) contains the number of times that ngram history appears in the input
-  // Postconditions:
-  //  - this.p.get(ngram) contains the conditional probability P(w|h) for ngram (h,w)
-  //      only non-zero probabilities are stored in this.p
-  private void convertCountsToProbabilities(HashMap<String,Integer> ngramCounts, HashMap<String,Integer> historyCounts) {
-    return;
-  }
+//**********************************converttorprob GOES HERE******************************/
 
   // incrementHashMap
   //  - If key was already in map, map.get(key) returns 1 more than it did before

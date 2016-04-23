@@ -24,10 +24,12 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.Arrays;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 
 
 public class LanguageModel {
@@ -65,10 +67,6 @@ public class LanguageModel {
     //convert counts to probabilities
     this.p = convertCountsToProbabilities(ngramCounts, historyCounts);
 
-    ArrayList<String> testString = stringToArray("without any");
-
-    System.out.println("Random next word: " + randomNextWord(testString, 4));
-
     return;
   }
 
@@ -91,19 +89,22 @@ public class LanguageModel {
   // Notes:
   //  - Call randomcurrWord to draw each new word
   public String randomCompletion( ArrayList<String> history, int order ) {
-    ArrayList<String> currHistory = history;
-    String currString = "";
-
-    //calls randomnextword -> so do that method to complete this one
-
-    //while not </s> or <fail> ...
-      //call draw next word function to get a word
-      // add this word to currString with a space
-      // add this word to currHistory (the copy of the input history)
-
-    //append </s> or <fail> currString
-
-    return currString;
+    ArrayList<String> historyCopy = new ArrayList<String>();
+    String rdmCompletion = "";
+    String randomWord = "";
+    for(String x : history){
+        historyCopy.add(x);
+    }
+    while(!randomWord.equals("<fail>") && !randomWord.equals("</s>")){
+        while(historyCopy.size() > order - 1) {
+          historyCopy.remove(0);
+        }
+        randomWord = randomNextWord(historyCopy, order);
+        rdmCompletion += " ";
+        rdmCompletion += randomWord;
+        historyCopy.add(randomWord);
+    }
+    return rdmCompletion;
   }
 
   //*** Private Helper Methods ***//
@@ -160,7 +161,19 @@ public class LanguageModel {
   //       "Error: Unable to open file " + countsFilename
   //      and then exit with value 1 (i.e. System.exit(1))
   private void saveCounts(String countsFilename, HashMap<String,Integer> ngramCounts) {
-    return;
+  /*  try{
+        if(!countsFilename.equals("")){ //"" might be null
+            FileWriter output = new FileWriter(countsFilename);
+            Object[] ngram = ngramCounts.keySet().toArray();
+            Arrays.sort(ngram);
+            for(int i = 0; i < ngram.length; i++){
+                output.write(ngram[i].toString() + '\t' + ngramCounts.get(ngram[i].toString()));
+            }
+        }
+    }catch(FileNotFoundException e){
+       System.out.println("Error: Unable to open file " + countsFilename);
+       System.exit(1);
+    }*/
   }
 
   // randomNextWord
@@ -170,6 +183,9 @@ public class LanguageModel {
     double draw = this.generator.nextDouble();
     double cumulativeSum = 0;
 
+    System.out.println("_______________________________");
+    System.out.println("history is: " + history);
+
     for (int i = 0; i < this.vocab.size(); i++) {
       String nextWord = vocab.get(i);
       String gramToCheck = arrayToString(history) + " " + nextWord;
@@ -177,6 +193,7 @@ public class LanguageModel {
         cumulativeSum = cumulativeSum + this.p.get(gramToCheck);
 
       if (cumulativeSum > draw) {
+        System.out.println("Returning word: " + nextWord);
         return nextWord;
       }
     }
@@ -184,7 +201,6 @@ public class LanguageModel {
     if (!this.p.containsKey(history)){
       return "<fail>";
     }
-
 
     return vocab.get(vocab.size()-1);
   }

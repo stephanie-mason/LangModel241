@@ -9,6 +9,9 @@
 //  - countsFilename is the name where the counts will be written
 //        countsFilename can also be null (output file for counts)
 // Postconditions:
+//  - this.p maps ngrams (h,w) to the the maximum likelihood estimates
+//    of P(w|h) for all n-grams up to maxOrder
+//    Only non-zero probabilities should be stored in this map
 //  - this.vocab contains each word appearing in textFilename exactly once
 //    in case-insensitive ascending alphabetic order
 //  - this.maxOrder is assigned maxOrder
@@ -16,6 +19,11 @@
 //  - If vocabFilename is non-null, the vocabulary words are printed to it, one per line, in order
 // Notes:
 //  - n-gram and history counts should be computed with a call to getCounts
+//  - convertCountsToProbabilities should be used to then get the probabilities
+//  - If opening any file throws a FileNotFoundException, print to standard error:
+//        "Error: Unable to open file " + filename
+//        (where filename contains the name of the problem file)
+//      and then exit with value 1 (i.e. System.exit(1))
 
 
 // getMaxOrder
@@ -59,3 +67,11 @@
 //  - If key was not in map, map.get(key) returns 1
 // Notes
 //  - This method is useful, but optional
+
+// convertCountsToProbabilities
+// Preconditions:
+//  - ngramCounts.get(ngram) contains the number of times that ngram appears in the input
+//  - historyCounts.get(history) contains the number of times that ngram history appears in the input
+// Postconditions:
+//  - this.p.get(ngram) contains the conditional probability P(w|h) for ngram (h,w)
+//      only non-zero probabilities are stored in this.p

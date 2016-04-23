@@ -33,18 +33,12 @@ import java.io.FileWriter;
 
 
 public class LanguageModel {
-  HashMap<String,Double> p;         // maps ngrams to conditional probabilities
-  ArrayList<String> vocab;          // stores the unique words in the input text
-  int maxOrder;                     // maximum n-gram order to compute
-  java.util.Random generator;       // a random number generator object
+  HashMap<String,Double> p;
+  ArrayList<String> vocab;
+  int maxOrder;
+  java.util.Random generator;
 
   // Constructor
-  //  - If countsFilename is non-null, the ngram counts words are printed to countsFilename, in order
-  //    each line has the ngram, then a tab, then the number of times that ngram appears
-  //    these should be printed in case-insensitive ascending alphabetic order by the n-grams
-  // Notes:
-  //  - File saving should be accomplished by calls to saveVocab and saveCounts
-
   public LanguageModel( String textFilename, int maxOrder, java.util.Random generator, String vocabFilename, String countsFilename ) {
     this.maxOrder = maxOrder;
     this.generator = generator;
@@ -58,11 +52,10 @@ public class LanguageModel {
     getCounts(input, ngramCounts, historyCounts, this.vocab, this.maxOrder);
 
     //print vocab to an output file (if applicable)
-    if(vocabFilename != null) {
-      saveVocab(this.vocab, vocabFilename);
-    }
+    saveVocab(this.vocab, vocabFilename);
 
     //print counts to an output file (if applicable)
+    saveCounts(countsFilename, ngramCounts);
 
     //convert counts to probabilities
     this.p = convertCountsToProbabilities(ngramCounts, historyCounts);
@@ -76,18 +69,11 @@ public class LanguageModel {
   }
 
   // randomCompletion
-  // Preconditions:
-  //  - history contains an initial history to complete
-  //  - order is the n-gram order to use when completing the sentence
-  // Postconditions:
-  //  - history must not be modified (i.e. make a copy of it)
   //  - Starting with an empty string, until </s> or <fail> is drawn:
   //    1) Draw a new word w according to P(w|h)
   //    2) Append a space and then w to the string you're accumulating
   //    3) w is added to the history h
   //   Once </s> or <fail> is reached, append it to the string and return the string
-  // Notes:
-  //  - Call randomcurrWord to draw each new word
   public String randomCompletion( ArrayList<String> history, int order ) {
     ArrayList<String> historyCopy = new ArrayList<String>();
     String rdmCompletion = "";
@@ -134,11 +120,13 @@ public class LanguageModel {
   // Save vocabulary list to an external file (if applicable)
   private void saveVocab(ArrayList<String> list, String vocabFilename) {
     try {
-      PrintStream out = new PrintStream(new FileOutputStream(vocabFilename));
-      for (int i = 0; i < list.size(); i++) {
-        out.println(list.get(i));
+      if(vocabFilename != null) {
+        PrintStream out = new PrintStream(new FileOutputStream(vocabFilename));
+        for (int i = 0; i < list.size(); i++) {
+          out.println(list.get(i));
+        }
+        out.close();
       }
-      out.close();
     } catch (FileNotFoundException e){
       System.out.println ("Unable to open file " + vocabFilename);
       System.exit(1);
@@ -147,33 +135,24 @@ public class LanguageModel {
   }
 
   // saveCounts
-  // Preconditions:
-  //  - countsFilename is the name where the counts will be written
-  //     countsFilename can also be null
-  //  - ngramCounts.get(ngram) returns the number of times ngram appears
-  //     ngrams with count 0 are not included
-  // Postconditions:
   //  - If countsFilename is non-null, the ngram counts words are printed to countsFilename,
   //     each line has the ngram, then a tab, then the number of times that ngram appears
   //     ngrams should be printed in case-insensitive ascending alphabetic order
-  // Notes:
-  //  - If opening the file throws a FileNotFoundException, print to standard error:
-  //       "Error: Unable to open file " + countsFilename
-  //      and then exit with value 1 (i.e. System.exit(1))
   private void saveCounts(String countsFilename, HashMap<String,Integer> ngramCounts) {
-  /*  try{
-        if(!countsFilename.equals("")){ //"" might be null
-            FileWriter output = new FileWriter(countsFilename);
+    try{
+        if(countsFilename != null){
+            PrintStream output = new PrintStream(new FileOutputStream(countsFilename));
             Object[] ngram = ngramCounts.keySet().toArray();
             Arrays.sort(ngram);
             for(int i = 0; i < ngram.length; i++){
-                output.write(ngram[i].toString() + '\t' + ngramCounts.get(ngram[i].toString()));
+                output.println(ngram[i].toString() + '\t' + ngramCounts.get(ngram[i].toString()));
             }
+            output.close();
         }
     }catch(FileNotFoundException e){
        System.out.println("Error: Unable to open file " + countsFilename);
        System.exit(1);
-    }*/
+    }
   }
 
   // randomNextWord
@@ -183,9 +162,6 @@ public class LanguageModel {
     double draw = this.generator.nextDouble();
     double cumulativeSum = 0;
 
-    System.out.println("_______________________________");
-    System.out.println("history is: " + history);
-
     for (int i = 0; i < this.vocab.size(); i++) {
       String nextWord = vocab.get(i);
       String gramToCheck = arrayToString(history) + " " + nextWord;
@@ -193,7 +169,6 @@ public class LanguageModel {
         cumulativeSum = cumulativeSum + this.p.get(gramToCheck);
 
       if (cumulativeSum > draw) {
-        System.out.println("Returning word: " + nextWord);
         return nextWord;
       }
     }

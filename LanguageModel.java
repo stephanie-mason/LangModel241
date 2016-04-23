@@ -65,67 +65,11 @@ public class LanguageModel {
     //convert counts to probabilities
     this.p = convertCountsToProbabilities(ngramCounts, historyCounts);
 
-    ArrayList<String> testString = stringToArray("here is");
+    ArrayList<String> testString = stringToArray("without any");
 
     System.out.println("Random next word: " + randomNextWord(testString, 4));
 
     return;
-  }
-
-  // randomNextWord
-  // Preconditions:
-  //  - history is the history on which to condition the draw
-  //  - order is the order of n-gram to use
-  //      (i.e. no more than n-1 history words)
-  //  - this.generator is the generator passed to the constructor
-  // Postconditions:
-  //  - A new word is drawn (see assignment description for the algorithm to use)
-  //  - If no word follows that history for the specified order, return "<fail>"
-  // Notes:
-  //  - The nextDouble() method draws a random number between 0 and 1
-  //  - ArrayList has a subList method to return an array slice
-  private String randomNextWord( ArrayList<String> history, int order) {
-
-    //don't alter the history that is input from command line because you need to reuse it for subsequent n-gram lengths
-    /*
-    drawRandomWord(history,order)
-      d := drawRandomNumber (between 0 and 1)
-      cumulativeSum := 0
-      for i in 0 .. vocabSize-1 do
-        cumulativeSum := cumulativeSum + P( ith vocabulary word given history )
-        if cumulativeSum > d
-        return ith vocabulary word
-        fi
-      od
-      return very last vocabulary word
-      end
-    */
-
-    double draw = this.generator.nextDouble();
-    System.out.println("draw" + draw);
-    System.out.println("this.vocab.size(): " + this.vocab.size());
-    double cumulativeSum = 0;
-    for (int i = 0; i < this.vocab.size(); i++) {
-      String nextWord = vocab.get(i);
-      System.out.println("Working on word: " + nextWord);
-      String gramToCheck = arrayToString(history) + " " + nextWord;
-
-      System.out.println("gramToCheck: " + gramToCheck);
-      System.out.println("probability of \"" + gramToCheck + "\": " + this.p.get(gramToCheck));
-
-
-      if (this.p.get(gramToCheck) != null)
-        cumulativeSum = cumulativeSum + this.p.get(gramToCheck);
-      System.out.println("cumSum: " + cumulativeSum);
-
-      System.out.println("__________________________________________");
-      if (cumulativeSum > draw) {
-        System.out.println("Found a good draw, returning word.");
-        return nextWord;
-      }
-    }
-
-    return vocab.get(vocab.size()-1);
   }
 
   //*** Accessors ***//
@@ -219,7 +163,31 @@ public class LanguageModel {
     return;
   }
 
-//**********************RANDOM NEXT WORD GOES HERE ****************************/
+  // randomNextWord
+  //  - A new word is drawn (see assignment description for the algorithm to use)
+  //  - If no word follows that history for the specified order, return "<fail>"
+  private String randomNextWord( ArrayList<String> history, int order) {
+    double draw = this.generator.nextDouble();
+    double cumulativeSum = 0;
+
+    for (int i = 0; i < this.vocab.size(); i++) {
+      String nextWord = vocab.get(i);
+      String gramToCheck = arrayToString(history) + " " + nextWord;
+      if (this.p.get(gramToCheck) != null)
+        cumulativeSum = cumulativeSum + this.p.get(gramToCheck);
+
+      if (cumulativeSum > draw) {
+        return nextWord;
+      }
+    }
+
+    if (!this.p.containsKey(history)){
+      return "<fail>";
+    }
+
+
+    return vocab.get(vocab.size()-1);
+  }
 
   // getCounts
   // Read input file and map n-grams/histories to their counts

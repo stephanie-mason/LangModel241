@@ -75,3 +75,18 @@
 // Postconditions:
 //  - this.p.get(ngram) contains the conditional probability P(w|h) for ngram (h,w)
 //      only non-zero probabilities are stored in this.p
+
+
+
+// randomNextWord
+// Preconditions:
+//  - history is the history on which to condition the draw
+//  - order is the order of n-gram to use
+//      (i.e. no more than n-1 history words)
+//  - this.generator is the generator passed to the constructor
+// Postconditions:
+//  - A new word is drawn (see assignment description for the algorithm to use)
+//  - If no word follows that history for the specified order, return "<fail>"
+// Notes:
+//  - The nextDouble() method draws a random number between 0 and 1
+//  - ArrayList has a subList method to return an array slice

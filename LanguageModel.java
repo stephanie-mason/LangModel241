@@ -64,6 +64,10 @@ public class LanguageModel {
     System.out.println("Getting counts...");
     getCounts(input, ngramCounts, historyCounts, vocab, maxOrder);
 
+
+    //ALPHABETIZE VOCAB LIST
+    Collections.sort(vocab);
+
     //print vocab to an output file (if applicable)
     if(vocabFilename != null) {
       saveVocab(vocab, vocabFilename);
@@ -108,6 +112,9 @@ public class LanguageModel {
   // Notes:
   //  - Call randomcurrWord to draw each new word
   public String randomCompletion( ArrayList<String> history, int order ) {
+
+    //
+
     return null;
   }
 
@@ -168,7 +175,7 @@ public class LanguageModel {
     return;
   }
 
-  // randomcurrWord
+  // randomNextWord
   // Preconditions:
   //  - history is the history on which to condition the draw
   //  - order is the order of n-gram to use
@@ -180,7 +187,10 @@ public class LanguageModel {
   // Notes:
   //  - The nextDouble() method draws a random number between 0 and 1
   //  - ArrayList has a subList method to return an array slice
-  private String randomcurrWord( ArrayList<String> history, int order) {
+  private String randomNextWord( ArrayList<String> history, int order) {
+
+    //don't alter the history that is input from command line because you need to reuse it for subsequent n-gram lengths
+
     return "";
   }
 
@@ -201,63 +211,87 @@ public class LanguageModel {
   //  - You may find it useful to implement helper function incrementHashMap and use it
   private void getCounts(Scanner input, HashMap<String,Integer> ngramCounts, HashMap<String,Integer> historyCounts, ArrayList<String> vocab, int maxOrder) {
     ArrayList<String> trainingArray = new ArrayList<String>();
-
+    ArrayList<String> linesArray = new ArrayList<String>();
+    ArrayList<String> currLine = new ArrayList<String>();
     String currWord = new String();
+    //for each line in the file do several things...
+      //add each word in the line to the training array X
+          //this array will later be iterated over to count the grams\
+      //add each word to the vocab list, but don't repeat anyX
+      //build n-gram HashMap for each order up to maxOrder w/ 0 value
+      //build history HashMap for each order up to maxOrder  w 0 values
 
-    //Get everything out of the input file
-    while (input.hasNext()){
-      currWord = input.next();
-      //BUILD TRAINING ARRAY
-      trainingArray.add(currWord);
 
-      //BUILD VOCAB LIST
-      // only add the word if it doesn't already appear in the list
-      if (notInList(vocab, currWord)) {
-        vocab.add(currWord);
-      }
+    //Convert scanner file to an ArrayList
+    while(input.hasNextLine()) {
+      linesArray.add(input.nextLine());
     }
 
-    //ALPHABETIZE VOCAB LIST
-    Collections.sort(vocab);
+    //Build ArrayLists and HashMaps
+    for (int i = 0; i < linesArray.size(); i++) {
+      currLine = stringToArray(linesArray.get(i));
+      System.out.println(currLine);
 
-    //CREATE N-GRAMS
-    //for each order from 2 up to max order, scan the trainingArray (ie if maxorder 4, iterate 2, 3, and 4 orders)
-    for (int n = 2; n <= maxOrder; n++) {
+      // BUILD N-GRAMS & HISTORIES
+      for (int n = 2; n <= maxOrder; n++) {
+        System.out.println("Building order " + n + "  n-grams...");
 
-      int placeholder = 0;
-      //while you are between <s> and </s>, create n-grams & histories
-      while(!trainingArray.get(placeholder).equals("</s>")) {
-        ArrayList<String> currGram = new ArrayList<String>();
-        ArrayList<String> currHist = new ArrayList<String>();
-        //create the current n-grams to search for
-        for(int i = placeholder; i <= placeholder + n - 1; i++) {
-          currGram.add(trainingArray.get(i));
-          // create history as well
-          if (i < placeholder + n - 1) {
-            currHist.add(trainingArray.get(i));
+        int placeholder = 0;
+        while(placeholder < currLine.size() - 1) {
+          ArrayList<String> currGram = new ArrayList<String>();
+          ArrayList<String> currHist = new ArrayList<String>();
+          for (int w = placeholder; w < placeholder + n; w++) {
+            System.out.println("W: " + w);
+
+            if (w < currLine.size())
+              currGram.add(currLine.get(w));
+
+            if (w < placeholder + n - 1)
+              currHist.add(currLine.get(w));
           }
+          System.out.println("Curr Gram:" + currGram);
+          System.out.println("Curr Hist:" + currHist);
+
+          if (currGram.size() == n){
+            System.out.println("CurrGram is right size, adding last two arrays.");
+            ngramCounts.put(arrayToString(currGram), 0);
+            historyCounts.put(arrayToString(currHist), 0);
+          }
+
+          placeholder++;
+          System.out.println("placeholder: " + placeholder);
         }
 
-        //add the current n-gram to the the count as the key and initialize count to 0
-        ngramCounts.put(arrayToString(currGram), 0);
-        historyCounts.put(arrayToString(currHist), 0);
-        placeholder++;
+        System.out.println("nGram Keys for n = " + n + " : " + ngramCounts.keySet());
+        System.out.println("ngram Size: " + ngramCounts.size());
+        System.out.println("History Keys for n = " + n + " : " + historyCounts.keySet());
+        System.out.println("History Size: " + historyCounts.size());
+
       }
 
-      System.out.println("nGram Keys for n = " + n + " : " + ngramCounts.keySet());
-      System.out.println("ngram Size: " + ngramCounts.size());
-      System.out.println("History Keys for n = " + n + " : " + historyCounts.keySet());
-      System.out.println("History Size: " + historyCounts.size());
-      System.out.println("Counting occurences...");
+      // MAKE ARRAYS
+      //System.out.println("Adding words to training & vocab arrays...");
+      for (int j = 0; j < currLine.size(); j++) {
+        currWord = currLine.get(j);
+        //System.out.println(currWord);
+
+        //BUILD TRAINING ARRAY
+        trainingArray.add(currWord);
+
+        //BUILD VOCAB LIST
+        // only add the word if it doesn't already appear in the list
+        if (notInList(vocab, currWord)) {
+          vocab.add(currWord);
+        }
+      }
 
       //this is the current n-gram... so scan the rest of the file for this n-gram
-        //if you find it, increment count associated with current key
-      //after finishing scanning, the next (order) words are the current n-gram. so on so forth. ONLY scan n-grams across lines, but count across entire file
-
-
-      placeholder ++;
-
+      //if you find it, increment count associated with current key
+      //after finishing scanning, the next (order) words are the current n-gram. so on so forth.
+      System.out.println("________________________________________________");
     }
+
+    System.out.println(trainingArray);
     return;
   }
 
